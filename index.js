@@ -179,6 +179,32 @@ async function run() {
       res.send(result);
     })
 
+
+    app.get('/user/:id', async(req,res)=> {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await userCollection.findOne(query);
+      res.send(result);
+  })
+      
+
+  app.put('/user/:id', async(req,res) => {
+    const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert:true};
+      const updatedUser = req.body;
+      const user = {
+          $set:{
+            name: updatedUser.name,
+            
+          }
+      }
+      const result = await userCollection.updateOne(filter,user,options)
+      res.send(result);
+
+  })
+
+
     app.delete('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
@@ -291,7 +317,8 @@ async function run() {
       res.send(result);
 
     })
-    // Delivered Status
+
+    // Delivered Status for parcel
     app.put('/parcels/delivered/:id', async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
@@ -321,7 +348,7 @@ async function run() {
           const updatedParcel = req.body;
           const parcel = {
               $set:{
-                userName: updatedParcel.name,
+                userName: updatedParcel.userName,
                 email: updatedParcel.email,
                 number: updatedParcel.number,
                 type: updatedParcel.type,
