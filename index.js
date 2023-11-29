@@ -318,7 +318,22 @@ async function run() {
 
     })
 
-    // Delivered Status for parcel
+    app.put('/parcel/cancel/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedParcel = req.body;
+      const parcel = {
+        $set: {
+          
+          status: 'cancel',
+        }
+      }
+      const result = await parcelCollection.updateOne(filter, parcel, options)
+      res.send(result);
+
+    })
+    // Delivered Status
     app.put('/parcels/delivered/:id', async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
