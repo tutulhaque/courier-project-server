@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
     const menuCollection = client.db('FinalRestaurant').collection('menu');
     const userCollection = client.db('FinalRestaurant').collection('users');
@@ -180,29 +180,29 @@ async function run() {
     })
 
 
-    app.get('/user/:id', async(req,res)=> {
+    app.get('/user/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await userCollection.findOne(query);
       res.send(result);
-  })
-      
+    })
 
-  app.put('/user/:id', async(req,res) => {
-    const id = req.params.id;
-      const filter = {_id: new ObjectId(id)}
-      const options = {upsert:true};
+
+    app.put('/user/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
       const updatedUser = req.body;
       const user = {
-          $set:{
-            name: updatedUser.name,
-            
-          }
+        $set: {
+          name: updatedUser.name,
+
+        }
       }
-      const result = await userCollection.updateOne(filter,user,options)
+      const result = await userCollection.updateOne(filter, user, options)
       res.send(result);
 
-  })
+    })
 
 
     app.delete('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
@@ -222,6 +222,17 @@ async function run() {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
     })
+
+
+    app.get('/parcelsByBookingDate', async (req, res) => {
+      try {
+        const cursor = await parcelCollection.find().toArray();
+        res.status(200).json(cursor);
+      } catch (error) {
+        console.error('Error fetching parcels:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    });
 
     // Parcels
     //   app.get('/parcels', async(req,res) => {
@@ -260,18 +271,6 @@ async function run() {
         res.status(500).json({ error: 'An error occurred while fetching cart items.' });
       }
     });
-
-    // app.get('/parcel-by-delivery-men', async (req, res) => {
-    //   const email = req.query.email; 
-    //   const query = { selectedDeliveryMen: email, status: 'onTheWay' }; // Filter by selectedDeliveryMen and status
-    //   try {
-    //     const parcelItems = await parcelCollection.find(query).toArray();
-    //     res.json(parcelItems);
-    //   } catch (error) {
-    //     console.error(error);
-    //     res.status(500).json({ error: 'An error occurred while fetching parcel items.' });
-    //   }
-    // });
 
     app.get('/parcel-by-delivery-men', async (req, res) => {
       const email = req.query.email;
@@ -325,7 +324,7 @@ async function run() {
       const updatedParcel = req.body;
       const parcel = {
         $set: {
-          
+
           status: 'cancel',
         }
       }
@@ -350,37 +349,37 @@ async function run() {
       res.send(result);
 
     })
-    app.get('/parcel/:id', async(req,res)=> {
-          const id = req.params.id;
-          const query = {_id: new ObjectId(id)}
-          const result = await parcelCollection.findOne(query);
-          res.send(result);
-      })
-      app.put('/parcel/:id', async(req,res) => {
-        const id = req.params.id;
-          const filter = {_id: new ObjectId(id)}
-          const options = {upsert:true};
-          const updatedParcel = req.body;
-          const parcel = {
-              $set:{
-                userName: updatedParcel.userName,
-                email: updatedParcel.email,
-                number: updatedParcel.number,
-                type: updatedParcel.type,
-                weight:updatedParcel.weight,
-                receiversName:updatedParcel.receiversName,
-                receiversNumber:updatedParcel.receiversNumber,
-                requestedDate: updatedParcel.requestedDate,
-                deliveryAddress: updatedParcel.deliveryAddress,
-                latitude: updatedParcel.latitude,
-                longitude: updatedParcel.longitude,
-                price: updatedParcel.price
-              }
-          }
-          const result = await parcelCollection.updateOne(filter,parcel,options)
-          res.send(result);
-  
-      })
+    app.get('/parcel/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await parcelCollection.findOne(query);
+      res.send(result);
+    })
+    app.put('/parcel/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedParcel = req.body;
+      const parcel = {
+        $set: {
+          userName: updatedParcel.userName,
+          email: updatedParcel.email,
+          number: updatedParcel.number,
+          type: updatedParcel.type,
+          weight: updatedParcel.weight,
+          receiversName: updatedParcel.receiversName,
+          receiversNumber: updatedParcel.receiversNumber,
+          requestedDate: updatedParcel.requestedDate,
+          deliveryAddress: updatedParcel.deliveryAddress,
+          latitude: updatedParcel.latitude,
+          longitude: updatedParcel.longitude,
+          price: updatedParcel.price
+        }
+      }
+      const result = await parcelCollection.updateOne(filter, parcel, options)
+      res.send(result);
+
+    })
 
     // app.delete('/carts/:id', async (req, res) => {
     //   const id = req.params.id;
@@ -431,13 +430,9 @@ async function run() {
       }
     });
 
-
-
-
-
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
